@@ -1,0 +1,24 @@
+{
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS",
+      "target": "ESNext"
+    }
+  },
+  "compilerOptions": {
+    "target": "es5",
+    "baseUrl": "./",
+    "module": "commonjs",
+    "declaration": true,
+    "sourceMap": true,
+    "outDir": "./build",
+    "strict": true,
+    "noImplicitUseStrict": false,
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": ["./src/typings"]
+  }
+}

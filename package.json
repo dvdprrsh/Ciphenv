@@ -1,0 +1,46 @@
+{
+  "name": "ciphenv",
+  "version": "1.0.0",
+  "description": "ciphenv (Ciphered Env) is a tool for encrypting and decrypting .ev* files using prefixes to indicate values to encrypt.",
+  "main": "src/index.ts",
+  "bin": {
+    "ciphenv": "./build/cli.js"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dvprrsh/cenv.git"
+  },
+  "keywords": [
+    ".env",
+    "dotenv",
+    "encrypted-env",
+    "secure-env",
+    "secure",
+    "encrypted",
+    "environment",
+    "variables"
+  ],
+  "author": "dvprrsh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dvprrsh/cenv/issues"
+  },
+  "homepage": "https://github.com/dvprrsh/cenv#readme",
+  "dependencies": {
+    "case": "^1.6.3",
+    "dotenv": "^8.2.0",
+    "ts-node": "^9.1.1",
+    "yargs": "^16.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.25",
+    "@types/yargs": "^16.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.15.0",
+    "@typescript-eslint/parser": "^4.15.0",
+    "eslint": "^7.19.0",
+    "typescript": "^4.1.5"
+  }
+}
