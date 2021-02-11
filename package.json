@@ -1,6 +1,6 @@
 {
   "name": "ciphenv",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "ciphenv (Ciphered Env) is a tool for encrypting and decrypting .ev* files using prefixes to indicate values to encrypt.",
   "main": "src/index.ts",
   "bin": {
