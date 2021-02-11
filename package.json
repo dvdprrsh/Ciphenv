@@ -6,13 +6,16 @@
   "bin": {
     "ciphenv": "./build/cli.js"
   },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "scripts": {
     "test": "test",
     "build": "tsc"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dvprrsh/cenv.git"
+    "url": "git+https://github.com/dvprrsh/Ciphenv.git"
   },
   "keywords": [
     ".env",
