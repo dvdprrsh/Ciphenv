@@ -1,7 +1,7 @@
 {
   "name": "ciphenv",
   "version": "1.0.3",
-  "description": "ciphenv (Ciphered Env) is a tool for encrypting and decrypting .ev* files using prefixes to indicate values to encrypt.",
+  "description": "ciphenv (Ciphered Env) is a tool for encrypting and decrypting .env* files using prefixes to indicate values to encrypt.",
   "main": "src/index.ts",
   "bin": {
     "ciphenv": "./build/cli.js"
@@ -30,9 +30,9 @@
   "author": "dvprrsh",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dvprrsh/cenv/issues"
+    "url": "https://github.com/dvprrsh/Ciphenv/issues"
   },
-  "homepage": "https://github.com/dvprrsh/cenv#readme",
+  "homepage": "https://github.com/dvprrsh/Ciphenv#readme",
   "dependencies": {
     "case": "^1.6.3",
     "dotenv": "^8.2.0",

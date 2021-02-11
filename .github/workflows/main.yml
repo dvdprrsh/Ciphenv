@@ -17,6 +17,11 @@ jobs:
         with:
           node-version: "14"
 
+      - name: Increment Version
+        run: |
+          npm version patch
+          git push origin master
+
       - name: Build
         run: |
           npm ci
@@ -24,7 +29,6 @@ jobs:
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
-
         with:
           name: ${{ github.run_id }}
           path: |
