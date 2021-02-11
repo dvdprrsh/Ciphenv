@@ -41,10 +41,9 @@ jobs:
         with:
           name: ${{ github.run_id }}
 
-      - name: ls
-        run: ls
-      # - name: Publish
-      #   run: |
-      #     npm publish --ignore-scripts
-      #   env:
-      #     NPMJS_ACCESS_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
+      - name: Publish
+        run: |
+          npm config set //registry.npmjs.org/:_authToken ${NPMJS_ACCESS_TOKEN}
+          npm publish --ignore-scripts
+        env:
+          NPMJS_ACCESS_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
