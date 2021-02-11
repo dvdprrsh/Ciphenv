@@ -1,12 +1,8 @@
 # Ciphenv
 
----
-
 Cipher (Ciphered Env) is a simple CLI tool to encrypt/cipher your `.env` files using prefixes to indicate whether you want the value to be encrypted using a given secret.
 
 ## Install
-
----
 
 ```shell
 npm install --save ciphenv
@@ -17,8 +13,6 @@ npm install -g ciphenv
 ```
 
 ## Usage
-
----
 
 Create one or many `.env` file(s) and add some values in following the [dotenv](https://www.npmjs.com/package/dotenv) pattern, e.g.
 
