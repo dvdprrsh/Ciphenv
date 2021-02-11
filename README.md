@@ -1,6 +1,7 @@
 # Ciphenv
 
 ![Build and Publish](https://github.com/dvprrsh/Ciphenv/workflows/Build%20and%20Publish/badge.svg?branch=main)
+[![Known Vulnerabilities](https://snyk.io/test/github/dvprrsh/Ciphenv/badge.svg?targetFile=package.json)](https://snyk.io/test/github/dvprrsh/Ciphenv?targetFile=package.json)
 
 Cipher (Ciphered Env) is a simple CLI tool to encrypt/cipher your `.env` files using prefixes to indicate whether you want the value to be encrypted using a given secret.
 
