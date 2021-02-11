@@ -6,9 +6,6 @@
   "bin": {
     "ciphenv": "./build/cli.js"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "scripts": {
     "test": "test",
     "build": "tsc"

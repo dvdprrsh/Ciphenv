@@ -5,7 +5,7 @@ on:
       - main
 
 jobs:
-  build-and-publish:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -21,8 +21,29 @@ jobs:
           npm ci
           npm run build
 
-      - name: Publish
-        run: |
-          npm publish --ignore-scripts
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+
+        with:
+          name: ${{ github.run_id }}
+          path: |
+            package.json
+            package-lock.json
+            *.md
+            bin/
+
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ github.run_id }}
+
+      - name: ls
+        run: ls
+      # - name: Publish
+      #   run: |
+      #     npm publish --ignore-scripts
+      #   env:
+      #     NPMJS_ACCESS_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
