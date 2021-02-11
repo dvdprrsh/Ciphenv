@@ -23,7 +23,7 @@ jobs:
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
           npm version ${{ github.event.inputs.version-increment }}
-          git push origin master
+          git push origin main
 
       - name: Build
         run: |
