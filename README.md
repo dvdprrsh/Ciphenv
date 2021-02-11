@@ -100,3 +100,13 @@ DB_PASS="DEC:s1mpl3"
 ```
 
 **Just remember to not commit the decrypted `.env` file(s)!**
+
+### CLI Options
+
+| Option, [alias]   | Description                                            | Value Type | Default      |
+| ----------------- | ------------------------------------------------------ | ---------- | ------------ |
+| `--version`       | Show version number                                    | `boolean`  |              |
+| `-O, --overwrite` | Overwrite the specified `.env*` file with new contents | `boolean`  | `false`      |
+| `-S, --secret`    | Secret to use for encryption                           | `string`\* | (required)   |
+| `-F, --file`      | Path to `.env*`                                        | `string`   | `{CWD}/.env` |
+| `-h, --help`      | Show help                                              | `boolean`  |              |
