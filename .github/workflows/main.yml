@@ -2,8 +2,9 @@ name: Build and Publish
 on:
   workflow_dispatch:
     inputs:
-      reason:
-        description: Reason for workflow run
+      version-increment:
+        default: patch
+        description: Package version
 
 jobs:
   build:
@@ -19,7 +20,9 @@ jobs:
 
       - name: Increment Version
         run: |
-          npm version patch
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          npm version ${{ github.event.inputs.version-increment }}
           git push origin master
 
       - name: Build
