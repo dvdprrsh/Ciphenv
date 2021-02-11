@@ -1,8 +1,8 @@
 name: Build and Publish
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    reason:
+      description: Reason for workflow run
 
 jobs:
   build:
