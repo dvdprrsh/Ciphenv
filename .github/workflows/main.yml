@@ -3,8 +3,9 @@ on:
   workflow_dispatch:
     inputs:
       version-increment:
-        default: patch
         description: Package version
+        default: patch
+        required: true
 
 jobs:
   build:
