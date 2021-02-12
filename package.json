@@ -4,7 +4,7 @@
   "description": "ciphenv (Ciphered Env) is a tool for encrypting and decrypting .env* files using prefixes to indicate values to encrypt.",
   "main": "src/index.ts",
   "bin": {
-    "ciphenv": "./build/cli.js"
+    "ciphenv": "./bin/cli.js"
   },
   "scripts": {
     "test": "test",
