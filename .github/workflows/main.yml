@@ -39,7 +39,7 @@ jobs:
             package.json
             package-lock.json
             *.md
-            bin/
+            lib/
 
   publish:
     runs-on: ubuntu-latest
