@@ -1,9 +1,20 @@
 # Ciphenv
 
-![Build and Publish](https://github.com/dvprrsh/Ciphenv/workflows/Build%20and%20Publish/badge.svg?branch=main)
-[![Known Vulnerabilities](https://snyk.io/test/github/dvprrsh/Ciphenv/badge.svg?targetFile=package.json)](https://snyk.io/test/github/dvprrsh/Ciphenv?targetFile=package.json)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/dvprrsh/ciphenv/Build%20and%20Publish?logo=github&style=for-the-badge)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/dvprrsh/Ciphenv?logo=github&style=for-the-badge)
+![Snyk Vulnerabilities for npm package](https://img.shields.io/snyk/vulnerabilities/npm/ciphenv?logo=snyk&style=for-the-badge)
+![npm](https://img.shields.io/npm/dw/ciphenv?logo=npm&style=for-the-badge)
+![npm](https://img.shields.io/npm/v/ciphenv?logo=npm&style=for-the-badge)
 
 Cipher (Ciphered Env) is a simple CLI tool to encrypt/cipher your `.env` files using prefixes to indicate whether you want the value to be encrypted using a given secret.
+
+- [Install](#install)
+- [Usage](#usage)
+  - [Encryption](#encryption)
+  - [Decryption](#decryption)
+    - [At Runtime](#at-runtime)
+    - [Using the CLI](#using-the-cli)
+  - [CLI Options](#cli-options)
 
 ## Install
 
