@@ -11,7 +11,7 @@
     "module": "commonjs",
     "declaration": true,
     "sourceMap": true,
-    "outDir": "./bin",
+    "outDir": "./lib",
     "strict": true,
     "noImplicitUseStrict": false,
     "noImplicitAny": true,
