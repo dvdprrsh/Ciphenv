@@ -43,7 +43,7 @@ For the values that you want to be encrypted add a prefix of `DEC:` (which indic
 ```text
 DB_HOST="localhost"
 DB_USER="root"
-DB_PASS="DEC:s1mpl3"
+DB_PASS="DEC:s1mpl32"
 ```
 
 Then, all that is needed is to run:
@@ -108,7 +108,7 @@ and the output would be:
 ```text
 DB_HOST="localhost"
 DB_USER="root"
-DB_PASS="DEC:s1mpl3"
+DB_PASS="DEC:s1mpl32"
 ```
 
 **Just remember to not commit the decrypted `.env` file(s)!**
