@@ -113,6 +113,13 @@ DB_PASS="DEC:s1mpl32"
 
 **Just remember to not commit the decrypted `.env` file(s)!**
 
+Here are `.gitignore` entries which could be used to avoid committing the decrypted `.env` files when using the default naming pattern:
+
+```text
+.env.*
+!.env.*.enc
+```
+
 ### CLI Options
 
 | Option, [alias]   | Description                                            | Value Type | Default      |
