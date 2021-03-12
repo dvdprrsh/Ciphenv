@@ -1,4 +1,4 @@
-name: Test Build
+name: Tests
 on:
   push:
     branches:
@@ -23,4 +23,4 @@ jobs:
           npm link
 
       - name: Test
-        run: ciphenv encrypt -h
+        run: npm test
