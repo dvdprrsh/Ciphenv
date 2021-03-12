@@ -5,9 +5,10 @@ import path from "path";
 import { cwd } from "process";
 import { CommandModule } from "yargs";
 import { DECRYPTED_REGEX, getCipher, getIV, getKey, getSalt } from "./helpers";
+import Logger from "./logger";
 import { Arguments } from "./types";
 
-const encrypt = (args: Arguments): void => {
+function encrypt(args: Arguments): void {
   const envPath = path.join(cwd(), args.file);
   const env = dotenv.config({ path: envPath });
   if (env.error) {
@@ -38,7 +39,8 @@ const encrypt = (args: Arguments): void => {
     filePath = envPath;
   }
   fs.writeFileSync(filePath, encEnvString);
-};
+  Logger.info(`.env file encrypted and saved to ${filePath}`);
+}
 
 const command: CommandModule<Arguments, Arguments> = {
   command: "encrypt",

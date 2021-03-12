@@ -5,22 +5,29 @@ import path from "path";
 import { cwd } from "process";
 import { CommandModule } from "yargs";
 import { encryptedValueSlice, ENCRYPTED_REGEX, getDecipher, getKey, ivSlice, saltSlice, tagSlice } from "./helpers";
+import Logger from "./logger";
 import { Arguments } from "./types";
 
-export const getDecryptedValue = (secret: string, value: string): string => {
-  const buffer = Buffer.from(value, "base64");
-  const salt = buffer.slice(saltSlice.start, saltSlice.end);
-  const iv = buffer.slice(ivSlice.start, ivSlice.end);
-  const tag = buffer.slice(tagSlice.start, tagSlice.end);
-  const encryptedValue = buffer.slice(encryptedValueSlice.start);
-  const decipherKey = getKey(secret, salt);
-  const decipher = getDecipher(decipherKey, iv);
-  decipher.setAuthTag(tag);
-  return [decipher.update(encryptedValue), decipher.final("utf8")].join("");
-};
+export function getDecryptedValue(secret: string, value: string, key: string): string {
+  try {
+    const buffer = Buffer.from(value, "base64");
+    const salt = buffer.slice(saltSlice.start, saltSlice.end);
+    const iv = buffer.slice(ivSlice.start, ivSlice.end);
+    const tag = buffer.slice(tagSlice.start, tagSlice.end);
+    const encryptedValue = buffer.slice(encryptedValueSlice.start);
+    const decipherKey = getKey(secret, salt);
+    const decipher = getDecipher(decipherKey, iv);
+    decipher.setAuthTag(tag);
+    return [decipher.update(encryptedValue), decipher.final("utf8")].join("");
+  } catch (err) {
+    Logger.error("Error during decryption! Error key:", key);
+    Logger.info("Did you use the correct secret to encrypt/decrypt the value?");
+    throw err;
+  }
+}
 
-export const getDecryptedValues = (secret: string, env: { [key: string]: any }): { [key: string]: any } =>
-  Object.entries(env).reduce((prev, [key, value]) => {
+export function getDecryptedValues(secret: string, env: { [key: string]: any }): { [key: string]: any } {
+  return Object.entries(env).reduce((prev, [key, value]) => {
     const defaultReturn = { ...prev, [key]: value };
     if (typeof value !== "string") {
       return defaultReturn;
@@ -29,10 +36,11 @@ export const getDecryptedValues = (secret: string, env: { [key: string]: any }):
     if (!regexResult?.groups?.isEncrypted) {
       return defaultReturn;
     }
-    return { ...prev, [key]: getDecryptedValue(secret, regexResult.groups.value) };
+    return { ...prev, [key]: getDecryptedValue(secret, regexResult.groups.value, key) };
   }, {});
+}
 
-const decrypt = (args: Arguments): void => {
+function decrypt(args: Arguments): void {
   const envPath = path.join(cwd(), args.file);
   const env = dotenv.config({ path: envPath });
   if (env.error) {
@@ -48,7 +56,7 @@ const decrypt = (args: Arguments): void => {
     if (typeof value !== "string" || !regexResult?.groups?.isEncrypted) {
       return `${prev}${constantCasedKey}=${typeof value === "string" ? `"${value}"` : value}\n`;
     }
-    return `${prev}${constantCasedKey}="DEC:${getDecryptedValue(args.secret, regexResult.groups.value)}"\n`;
+    return `${prev}${constantCasedKey}="DEC:${getDecryptedValue(args.secret, regexResult.groups.value, key)}"\n`;
   }, "");
 
   let filePath = path.join(path.dirname(envPath), `${path.basename(envPath).replace(".enc", "")}.dec`);
@@ -56,7 +64,8 @@ const decrypt = (args: Arguments): void => {
     filePath = envPath;
   }
   fs.writeFileSync(filePath, encEnvString);
-};
+  Logger.info(`.env file decrypted and saved to ${filePath}`);
+}
 
 const command: CommandModule<Arguments, Arguments> = {
   command: "decrypt",

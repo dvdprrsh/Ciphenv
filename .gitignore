@@ -8,3 +8,7 @@ node_modules/
 
 # Build
 lib/
+
+# Test `.env`
+.env*
+!.env
