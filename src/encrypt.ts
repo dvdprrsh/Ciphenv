@@ -18,7 +18,7 @@ function encrypt(args: Arguments): void {
     throw new Error(`.env file not found at ${envPath}`);
   }
 
-  const encEnvString = Object.entries(env.parsed).reduce((prev, [key, value]) => {
+  const encEnvString = Object.entries(env.parsed).reduce(function (prev, [key, value]) {
     const constantCasedKey = Case.constant(key);
     const regexResult = DECRYPTED_REGEX.exec(value);
     if (typeof value !== "string" || !regexResult?.groups?.isDecrypted) {
