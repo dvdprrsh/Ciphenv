@@ -8,8 +8,23 @@ import { DECRYPTED_REGEX, getCipher, getIV, getKey, getSalt } from "./helpers";
 import Logger from "./logger";
 import { Arguments } from "./types";
 
-function encrypt(args: Arguments): void {
-  const envPath = path.join(cwd(), args.file);
+function getEncryptedValue(secret: string, value: string, key?: string) {
+  try {
+    const iv = getIV();
+    const salt = getSalt();
+    const cipherKey = getKey(secret, salt);
+    const cipher = getCipher(cipherKey, iv);
+    const encrypted = Buffer.concat([cipher.update(value, "utf8"), cipher.final()]);
+    const tag = cipher.getAuthTag();
+    return Buffer.concat([salt, iv, tag, encrypted]).toString("base64");
+  } catch (error) {
+    Logger.error("Error during encryption!", ...(!key ? [] : ["Error key:", key]));
+    throw error;
+  }
+}
+
+function encryptFile(secret: string, file: string | true, replace: boolean) {
+  const envPath = path.join(cwd(), typeof file === "boolean" ? ".env" : file);
   const env = dotenv.config({ path: envPath });
   if (env.error) {
     throw env.error;
@@ -24,32 +39,40 @@ function encrypt(args: Arguments): void {
     if (typeof value !== "string" || !regexResult?.groups?.isDecrypted) {
       return `${prev}${constantCasedKey}=${typeof value === "string" ? `"${value}"` : value}\n`;
     }
-    const iv = getIV();
-    const salt = getSalt();
-    const cipherKey = getKey(args.secret, salt);
-    const cipher = getCipher(cipherKey, iv);
-    const encrypted = Buffer.concat([cipher.update(regexResult.groups.value, "utf8"), cipher.final()]);
-    const tag = cipher.getAuthTag();
-
-    return `${prev}${constantCasedKey}="ENC:${Buffer.concat([salt, iv, tag, encrypted]).toString("base64")}"\n`;
+    return `${prev}${constantCasedKey}="ENC:${getEncryptedValue(secret, regexResult.groups.value, key)}"\n`;
   }, "");
 
-  let filePath = path.join(path.dirname(envPath), `${path.basename(envPath)}.enc`);
-  if (args.overwrite) {
+  let filePath = path.join(path.dirname(envPath), `${path.basename(envPath).replace(".dec", "")}.enc`);
+  if (replace) {
     filePath = envPath;
   }
   fs.writeFileSync(filePath, encEnvString);
   Logger.info(`.env file encrypted and saved to ${filePath}`);
 }
 
+function encryptValue(secret: string, value: string) {
+  const encrypted = getEncryptedValue(secret, value);
+  Logger.success("Encrypted value:", encrypted);
+}
+
+function encrypt(args: Arguments): void {
+  if (args.file) {
+    encryptFile(args.secret, args.file, args.replace);
+  }
+  if (args.value) {
+    encryptValue(args.secret, args.value);
+  }
+  Logger.success("✅ Ciphenv Completed Encryption");
+}
+
 const command: CommandModule<Arguments, Arguments> = {
   command: "encrypt",
   describe: "Encrypt specified .env* file",
   builder: {
-    overwrite: {
-      alias: "O",
+    replace: {
+      alias: "R",
       boolean: true,
-      describe: "Overwrite the specified .env file with new contents",
+      describe: "Replace the specified .env file with the new contents",
       default: false,
     },
     secret: {
@@ -60,9 +83,21 @@ const command: CommandModule<Arguments, Arguments> = {
     },
     file: {
       alias: "F",
-      nargs: 1,
+      string: true,
+      boolean: true,
       describe: "Path to .env*",
-      default: ".env",
+      coerce(arg: string | boolean): string | false {
+        if (typeof arg === "string") {
+          return arg;
+        }
+        return arg && ".env";
+      },
+    },
+    value: {
+      alias: "V",
+      nargs: 1,
+      demandOption: false,
+      describe: "Value to be encrypted",
     },
   },
   handler: encrypt,
