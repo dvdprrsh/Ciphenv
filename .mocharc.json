@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json.schemastore.org/mocharc.json",
+  "full-trace": true,
+  "extension": ["ts"],
+  "require": ["ts-node/register"]
+}

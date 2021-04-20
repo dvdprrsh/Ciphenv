@@ -83,10 +83,9 @@ const command: CommandModule<Arguments, Arguments> = {
     },
     file: {
       alias: "F",
-      string: true,
-      boolean: true,
       describe: "Path to .env*",
       coerce(arg: string | boolean): string | false {
+        Logger.success(arg);
         if (typeof arg === "string") {
           return arg;
         }
