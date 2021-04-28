@@ -8,17 +8,14 @@
   "compilerOptions": {
     "target": "es5",
     "baseUrl": "./",
-    "module": "commonjs",
+    "module": "CommonJS",
     "declaration": true,
     "outDir": "./lib",
     "strict": true,
-    "noImplicitUseStrict": false,
     "noImplicitAny": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "typeRoots": ["./typings", "./node_modules/@types"]
+    "forceConsistentCasingInFileNames": true
   },
   "exclude": ["tests/**/*"]
 }
