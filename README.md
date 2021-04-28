@@ -123,10 +123,11 @@ Here are `.gitignore` entries which could be used to avoid committing the decryp
 
 ### CLI Options
 
-| Option, [alias]   | Description                                            | Value Type | Default      |
-| ----------------- | ------------------------------------------------------ | ---------- | ------------ |
-| `--version`       | Show version number                                    | `boolean`  |              |
-| `-O, --overwrite` | Overwrite the specified `.env*` file with new contents | `boolean`  | `false`      |
-| `-S, --secret`    | Secret to use for encryption                           | `string`\* | (required)   |
-| `-F, --file`      | Path to `.env*`                                        | `string`   | `{CWD}/.env` |
-| `-h, --help`      | Show help                                              | `boolean`  |              |
+| Option, [alias] | Description                                            | Value Type            | Default    |
+| --------------- | ------------------------------------------------------ | --------------------- | ---------- |
+| `--version`     | Show version number                                    | `boolean`             |            |
+| `-R, --replace` | Overwrite the specified `.env*` file with new contents | `boolean`             | `false`    |
+| `-S, --secret`  | Secret to use for encryption                           | `string`\*            | (required) |
+| `-F, --file`    | Path to `.env*`                                        | `string` or `boolean` | `false`    |
+| `-V, --value`   | Value to be encrypted                                  | `string`              |            |
+| `-h, --help`    | Show help                                              | `boolean`             |            |

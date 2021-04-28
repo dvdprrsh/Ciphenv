@@ -10,9 +10,9 @@ function getDecEnv(type: "command" | "function" = "command") {
   return { SECRET_VALUE: type === "command" ? "DEC:encryptMe" : "encryptMe", PLAIN_VALUE: "don't encrypt me please" };
 }
 
-describe("Encrypt then Decrypt", function () {
-  describe("encryption", function () {
-    describe("encryption command successful", function () {
+describe("Encrypt then Decrypt File", function () {
+  describe("Encryption", function () {
+    describe("Encryption command successful", function () {
       it("should run `encrypt` command", async function () {
         const res = await exec("ciphenv encrypt --file ./tests/.env --secret superSecret");
         expect(res.stderr).to.be.empty;
@@ -27,7 +27,7 @@ describe("Encrypt then Decrypt", function () {
   });
 
   describe("Decryption", function () {
-    describe("decryption command successful", function () {
+    describe("Decryption command successful", function () {
       it("should run `decrypt` command", async function () {
         const res = await exec("ciphenv decrypt --file ./tests/.env.enc --secret superSecret");
         expect(res.stderr).to.be.empty;
@@ -38,7 +38,7 @@ describe("Encrypt then Decrypt", function () {
       });
     });
 
-    describe("decryption function successful", function () {
+    describe("Decryption function successful", function () {
       it("should use ciphenv `getDecryptedValues` to decrypt values", async function () {
         const encEnv = dotenv.config({ path: "./tests/.env.enc" }).parsed;
         expect(encEnv).to.exist;

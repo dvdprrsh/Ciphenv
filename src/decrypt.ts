@@ -4,11 +4,20 @@ import fs from "fs";
 import path from "path";
 import { cwd } from "process";
 import { CommandModule } from "yargs";
-import { encryptedValueSlice, ENCRYPTED_REGEX, getDecipher, getKey, ivSlice, saltSlice, tagSlice } from "./helpers";
+import {
+  encryptedValueSlice,
+  ENCRYPTED_REGEX,
+  getBuilder,
+  getDecipher,
+  getKey,
+  ivSlice,
+  saltSlice,
+  tagSlice,
+} from "./helpers";
 import Logger from "./logger";
 import { Arguments } from "./types";
 
-export function getDecryptedValue(secret: string, value: string, key: string): string {
+export function getDecryptedValue(secret: string, value: string, key?: string): string {
   try {
     const buffer = Buffer.from(value, "base64");
     const salt = buffer.slice(saltSlice.start, saltSlice.end);
@@ -19,10 +28,10 @@ export function getDecryptedValue(secret: string, value: string, key: string): s
     const decipher = getDecipher(decipherKey, iv);
     decipher.setAuthTag(tag);
     return [decipher.update(encryptedValue), decipher.final("utf8")].join("");
-  } catch (err) {
-    Logger.error("Error during decryption! Error key:", key);
+  } catch (error) {
+    Logger.error("Error during decryption!", ...(!key ? [] : ["Error key:", key]));
     Logger.info("Did you use the correct secret to encrypt/decrypt the value?");
-    throw err;
+    throw error;
   }
 }
 
@@ -40,8 +49,8 @@ export function getDecryptedValues(secret: string, env: { [key: string]: any }):
   }, {});
 }
 
-function decrypt(args: Arguments): void {
-  const envPath = path.join(cwd(), args.file);
+function decryptFile(secret: string, file: string | true, replace: boolean) {
+  const envPath = path.join(cwd(), typeof file === "boolean" ? ".env" : file);
   const env = dotenv.config({ path: envPath });
   if (env.error) {
     throw env.error;
@@ -50,39 +59,43 @@ function decrypt(args: Arguments): void {
     throw new Error(`.env file not found at ${envPath}`);
   }
 
-  const encEnvString = Object.entries(env.parsed).reduce((prev, [key, value]) => {
+  const encEnvString = Object.entries(env.parsed).reduce(function (prev, [key, value]) {
     const constantCasedKey = Case.constant(key);
     const regexResult = ENCRYPTED_REGEX.exec(value);
     if (typeof value !== "string" || !regexResult?.groups?.isEncrypted) {
       return `${prev}${constantCasedKey}=${typeof value === "string" ? `"${value}"` : value}\n`;
     }
-    return `${prev}${constantCasedKey}="DEC:${getDecryptedValue(args.secret, regexResult.groups.value, key)}"\n`;
+    return `${prev}${constantCasedKey}="DEC:${getDecryptedValue(secret, regexResult.groups.value, key)}"\n`;
   }, "");
 
   let filePath = path.join(path.dirname(envPath), `${path.basename(envPath).replace(".enc", "")}.dec`);
-  if (args.overwrite) {
+  if (replace) {
     filePath = envPath;
   }
   fs.writeFileSync(filePath, encEnvString);
   Logger.info(`.env file decrypted and saved to ${filePath}`);
 }
 
+function decryptValue(secret: string, value: string) {
+  const decrypted = getDecryptedValue(secret, value);
+  Logger.success("Decrypted value:", decrypted);
+}
+
+function decrypt(args: Arguments): void {
+  if (args.file) {
+    decryptFile(args.secret, args.file, args.replace);
+  }
+  if (args.value) {
+    decryptValue(args.secret, args.value);
+  }
+  Logger.success("✅ Ciphenv Completed Decryption");
+}
+
 const command: CommandModule<Arguments, Arguments> = {
   command: "decrypt",
   describe: "Decrypt specified .env* file",
   builder: {
-    secret: {
-      alias: "S",
-      nargs: 1,
-      demandOption: "The secret used for encryption is required for decryption",
-      describe: "Secret to use for decryption",
-    },
-    file: {
-      alias: "F",
-      nargs: 1,
-      describe: "Path to .env*",
-      default: ".env",
-    },
+    ...getBuilder("decryption"),
   },
   handler: decrypt,
 };

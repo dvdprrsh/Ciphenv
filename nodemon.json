@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json.schemastore.org/nodemon.json",
+  "verbose": true,
+  "watch": ["src/*.ts", "tests/*.test.ts"],
+  "ext": "ts"
+}
