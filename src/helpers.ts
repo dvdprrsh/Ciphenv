@@ -1,7 +1,47 @@
 import crypto from "crypto";
+import { CommandModule } from "yargs";
+import { Arguments } from "./types";
 
 export const DECRYPTED_REGEX = /^(?<isDecrypted>DEC:)?(?<value>.+)/i;
 export const ENCRYPTED_REGEX = /^(?<isEncrypted>ENC:)?(?<value>.+)/i;
+
+export function getBuilder(type: "encryption" | "decryption"): CommandModule<Arguments, Arguments>["builder"] {
+  const isEncryption = type === "encryption";
+  return {
+    replace: {
+      alias: "R",
+      boolean: true,
+      describe: "Replace the specified .env file with the new contents",
+      default: false,
+    },
+    secret: {
+      alias: "S",
+      nargs: 1,
+      demandOption: isEncryption
+        ? "A custom secret is required"
+        : "The secret used for encryption is required for decryption",
+      describe: `Secret to use for ${type}`,
+    },
+    file: {
+      alias: "F",
+      describe: "Path to .env*",
+      default: false,
+      coerce(arg: string | boolean): string | false {
+        if (typeof arg === "string") {
+          return arg;
+        }
+        return arg && ".env";
+      },
+    },
+    value: {
+      alias: "V",
+      nargs: 1,
+      describe: `Value to be ${isEncryption ? "encrypted" : "decrypted"}`,
+      string: true,
+      demandOption: false,
+    },
+  };
+}
 
 export const algorithm = "aes-256-gcm";
 export const ivLength = 16;

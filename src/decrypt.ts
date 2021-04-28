@@ -4,7 +4,16 @@ import fs from "fs";
 import path from "path";
 import { cwd } from "process";
 import { CommandModule } from "yargs";
-import { encryptedValueSlice, ENCRYPTED_REGEX, getDecipher, getKey, ivSlice, saltSlice, tagSlice } from "./helpers";
+import {
+  encryptedValueSlice,
+  ENCRYPTED_REGEX,
+  getBuilder,
+  getDecipher,
+  getKey,
+  ivSlice,
+  saltSlice,
+  tagSlice,
+} from "./helpers";
 import Logger from "./logger";
 import { Arguments } from "./types";
 
@@ -86,34 +95,7 @@ const command: CommandModule<Arguments, Arguments> = {
   command: "decrypt",
   describe: "Decrypt specified .env* file",
   builder: {
-    replace: {
-      alias: "R",
-      boolean: true,
-      describe: "Replace the specified .env file with the new contents",
-      default: false,
-    },
-    secret: {
-      alias: "S",
-      nargs: 1,
-      demandOption: "The secret used for encryption is required for decryption",
-      describe: "Secret to use for decryption",
-    },
-    file: {
-      alias: "F",
-      describe: "Path to .env*",
-      coerce(arg: string | boolean): string | false {
-        if (typeof arg === "string") {
-          return arg;
-        }
-        return arg && ".env";
-      },
-    },
-    value: {
-      alias: "V",
-      nargs: 1,
-      describe: "Value to be decrypted",
-      demandOption: false,
-    },
+    ...getBuilder("decryption"),
   },
   handler: decrypt,
 };
