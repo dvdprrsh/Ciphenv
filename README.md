@@ -12,9 +12,11 @@ Ciphenv (Ciphered Env) is a simple CLI tool to encrypt/cipher your `.env` files 
 - [Install](#install)
 - [Usage](#usage)
   - [Encryption](#encryption)
+    - [Encrypting Entire Files](#encrypting-entire-files)
   - [Decryption](#decryption)
     - [At Runtime](#at-runtime)
     - [Using the CLI](#using-the-cli)
+    - [Decrypting Entire Files](#decrypting-entire-files)
   - [CLI Options](#cli-options)
 
 ## Install
@@ -61,6 +63,28 @@ and the output in the `.env.enc` file would be:
 DB_HOST="localhost"
 DB_USER="root"
 DB_PASS="ENC:********"
+```
+
+#### Encrypting Entire Files
+
+Ciphenv is also able to encrypt whole files through the use of another special prefix, being `DEC_FILE_PATH:` (path to the decrypted file). This can be especially useful for PEM keys and other multiline values that require encryption.
+
+Following from the example above, the syntax would look like this:
+
+```text
+DB_HOST="localhost"
+DB_USER="root"
+DB_PASS="DEC:s1mpl32"
+PEM="DEC_FILE_PATH:./keys/super-secret.pem"
+```
+
+after encryption, the resultant `.env` file would end up as so:
+
+```text
+DB_HOST="localhost"
+DB_USER="root"
+DB_PASS="ENC:********"
+PEM="ENC:********"
 ```
 
 ### Decryption
@@ -120,6 +144,21 @@ Here are `.gitignore` entries which could be used to avoid committing the decryp
 .env.*
 !.env.*.enc
 ```
+
+#### Decrypting Entire Files
+
+Decrypting entire files places the decrypted file path back in to the `.env` file like so:
+
+```text
+DB_HOST="localhost"
+DB_USER="root"
+DB_PASS="DEC:s1mpl32"
+PEM="DEC_FILE_PATH:./keys/super-secret.pem"
+```
+
+and also creates the `super-secret.pem` file with it's decrypted contents again.
+
+The above occurs partly to avoid any issues with then re-encrypting the decrypted `.env` file, as the value would be multiline and also to have the behaviour that you may expect, where something decrypted should match the original used during encryption.
 
 ### CLI Options
 
