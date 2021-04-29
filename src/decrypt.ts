@@ -1,11 +1,12 @@
-import Case from "case";
-import dotenv from "dotenv";
+import { constantCase } from "constant-case";
+import { parse } from "dotenv";
 import fs from "fs";
 import path from "path";
 import { cwd } from "process";
 import { CommandModule } from "yargs";
 import {
   encryptedValueSlice,
+  ENCRYPTED_FILE_REGEX,
   ENCRYPTED_REGEX,
   getBuilder,
   getDecipher,
@@ -45,32 +46,50 @@ export function getDecryptedValues(secret: string, env: { [key: string]: any }):
     if (!regexResult?.groups?.isEncrypted) {
       return defaultReturn;
     }
-    return { ...prev, [key]: getDecryptedValue(secret, regexResult.groups.value, key) };
+
+    let decrypted = getDecryptedValue(secret, regexResult.groups.value, key);
+
+    const encFileRes = decrypted.match(ENCRYPTED_FILE_REGEX);
+    if (encFileRes?.groups?.path) {
+      decrypted = encFileRes.groups.value;
+    }
+
+    return { ...prev, [key]: decrypted };
   }, {});
 }
 
 function decryptFile(secret: string, file: string | true, replace: boolean) {
   const envPath = path.join(cwd(), typeof file === "boolean" ? ".env" : file);
-  const env = dotenv.config({ path: envPath });
-  if (env.error) {
-    throw env.error;
-  }
-  if (!env.parsed) {
-    throw new Error(`.env file not found at ${envPath}`);
-  }
+  if (!fs.existsSync(envPath)) throw new Error(`${envPath} not found`);
 
-  const encEnvString = Object.entries(env.parsed).reduce(function (prev, [key, value]) {
-    const constantCasedKey = Case.constant(key);
+  const env = parse(fs.readFileSync(envPath));
+
+  const encEnvString = Object.entries(env).reduce(function (prev, [key, value]) {
+    const constantCasedKey = constantCase(key);
     const regexResult = ENCRYPTED_REGEX.exec(value);
+
     if (typeof value !== "string" || !regexResult?.groups?.isEncrypted) {
       return `${prev}${constantCasedKey}=${typeof value === "string" ? `"${value}"` : value}\n`;
     }
-    return `${prev}${constantCasedKey}="DEC:${getDecryptedValue(secret, regexResult.groups.value, key)}"\n`;
+
+    let decrypted = getDecryptedValue(secret, regexResult.groups.value, key);
+
+    const encFileRes = decrypted.match(ENCRYPTED_FILE_REGEX);
+    if (encFileRes?.groups?.path) {
+      const encFile = encFileRes.groups;
+      const decFilePath = path.join(path.dirname(envPath), encFile.path);
+      fs.writeFileSync(path.normalize(decFilePath), encFile.value);
+      decrypted = `DEC_FILE_PATH:${encFile.path}`;
+    } else {
+      decrypted = `DEC:${decrypted}`;
+    }
+
+    return `${prev}${constantCasedKey}="${decrypted}"\n`;
   }, "");
 
-  let filePath = path.join(path.dirname(envPath), `${path.basename(envPath).replace(".enc", "")}.dec`);
-  if (replace) {
-    filePath = envPath;
+  let filePath = envPath;
+  if (!replace) {
+    filePath = path.join(path.dirname(envPath), `${path.basename(envPath).replace(".enc", "")}.dec`);
   }
   fs.writeFileSync(filePath, encEnvString);
   Logger.info(`.env file decrypted and saved to ${filePath}`);
