@@ -158,7 +158,7 @@ PEM="DEC_FILE_PATH:./keys/super-secret.pem"
 
 and also creates the `super-secret.pem` file with it's decrypted contents again.
 
-The above occurs partly to avoid any issues with then re-encrypting the decrypted `.env` file, as the value would be multiline and also to have the behaviour that you may expect, where something decrypted should match the original used during encryption.
+The above occurs partly to avoid any issues with re-encrypting the decrypted `.env` file as the value would be multiline, but also to have the behaviour that you may expect, where something decrypted should match the original used during encryption.
 
 ### CLI Options
 
