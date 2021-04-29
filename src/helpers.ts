@@ -2,8 +2,9 @@ import crypto from "crypto";
 import { CommandModule } from "yargs";
 import { Arguments } from "./types";
 
-export const DECRYPTED_REGEX = /^(?<isDecrypted>DEC:)?(?<value>.+)/i;
+export const DECRYPTED_REGEX = /^((?<isDecrypted>DEC):|(?<isDecryptedFile>DEC_FILE_PATH):)?(?<value>.+)/i;
 export const ENCRYPTED_REGEX = /^(?<isEncrypted>ENC:)?(?<value>.+)/i;
+export const ENCRYPTED_FILE_REGEX = /^(?<path>.+)_PATH_END_(?<value>.+)/is;
 
 export function getBuilder(type: "encryption" | "decryption"): CommandModule<Arguments, Arguments>["builder"] {
   const isEncryption = type === "encryption";

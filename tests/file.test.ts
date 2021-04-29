@@ -1,13 +1,21 @@
 import { expect } from "chai";
 import { exec as execute } from "child_process";
 import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
 import { promisify } from "util";
 import { getDecryptedValues } from "../src";
 
 const exec = promisify(execute);
 
+const fileValue = fs.readFileSync(path.join(__dirname, "keys", "super-secret.key")).toString();
+
 function getDecEnv(type: "command" | "function" = "command") {
-  return { SECRET_VALUE: type === "command" ? "DEC:encryptMe" : "encryptMe", PLAIN_VALUE: "don't encrypt me please" };
+  return {
+    SECRET_VALUE: type === "command" ? "DEC:encryptMe" : "encryptMe",
+    PLAIN_VALUE: "don't encrypt me please",
+    FILE_VALUE: type === "command" ? "DEC_FILE_PATH:./keys/super-secret.key" : fileValue,
+  };
 }
 
 describe("Encrypt then Decrypt File", function () {
@@ -19,8 +27,9 @@ describe("Encrypt then Decrypt File", function () {
       });
       it("should check values have been encrypted", async function () {
         const encEnv = dotenv.config({ path: "./tests/.env.enc" }).parsed;
-        expect(encEnv).to.have.keys("SECRET_VALUE", "PLAIN_VALUE");
+        expect(encEnv).to.have.keys("SECRET_VALUE", "PLAIN_VALUE", "FILE_VALUE");
         expect(encEnv!.SECRET_VALUE).to.match(/ENC:.+/);
+        expect(encEnv!.FILE_VALUE).to.match(/ENC:.+/);
         expect(encEnv!.PLAIN_VALUE).to.equal("don't encrypt me please");
       });
     });

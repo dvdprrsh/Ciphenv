@@ -1,5 +1,5 @@
-import Case from "case";
-import dotenv from "dotenv";
+import { constantCase } from "constant-case";
+import { parse } from "dotenv";
 import fs from "fs";
 import path from "path";
 import { cwd } from "process";
@@ -25,26 +25,31 @@ function getEncryptedValue(secret: string, value: string, key?: string) {
 
 function encryptFile(secret: string, file: string | true, replace: boolean) {
   const envPath = path.join(cwd(), typeof file === "boolean" ? ".env" : file);
-  const env = dotenv.config({ path: envPath });
-  if (env.error) {
-    throw env.error;
-  }
-  if (!env.parsed) {
-    throw new Error(`.env file not found at ${envPath}`);
-  }
+  if (!fs.existsSync(envPath)) throw new Error(`${envPath} not found`);
 
-  const encEnvString = Object.entries(env.parsed).reduce(function (prev, [key, value]) {
-    const constantCasedKey = Case.constant(key);
+  const env = parse(fs.readFileSync(envPath));
+
+  const encEnvString = Object.entries(env).reduce(function (prev, [key, value]) {
+    const constantCasedKey = constantCase(key);
     const regexResult = DECRYPTED_REGEX.exec(value);
-    if (typeof value !== "string" || !regexResult?.groups?.isDecrypted) {
+
+    if (typeof value !== "string" || (!regexResult?.groups?.isDecrypted && !regexResult?.groups?.isDecryptedFile)) {
       return `${prev}${constantCasedKey}=${typeof value === "string" ? `"${value}"` : value}\n`;
     }
-    return `${prev}${constantCasedKey}="ENC:${getEncryptedValue(secret, regexResult.groups.value, key)}"\n`;
+
+    let decryptedValue = regexResult.groups.value;
+    if (regexResult.groups.isDecryptedFile) {
+      const decFilePath = path.join(path.dirname(envPath), regexResult.groups.value);
+      const contents = fs.readFileSync(path.normalize(decFilePath));
+      decryptedValue = `${regexResult.groups.value}_PATH_END_${contents.toString()}`;
+    }
+
+    return `${prev}${constantCasedKey}="ENC:${getEncryptedValue(secret, decryptedValue, key)}"\n`;
   }, "");
 
-  let filePath = path.join(path.dirname(envPath), `${path.basename(envPath).replace(".dec", "")}.enc`);
-  if (replace) {
-    filePath = envPath;
+  let filePath = envPath;
+  if (!replace) {
+    filePath = path.join(path.dirname(envPath), `${path.basename(envPath).replace(".dec", "")}.enc`);
   }
   fs.writeFileSync(filePath, encEnvString);
   Logger.info(`.env file encrypted and saved to ${filePath}`);
@@ -56,13 +61,17 @@ function encryptValue(secret: string, value: string) {
 }
 
 function encrypt(args: Arguments): void {
-  if (args.file) {
-    encryptFile(args.secret, args.file, args.replace);
+  try {
+    if (args.file) {
+      encryptFile(args.secret, args.file, args.replace);
+    }
+    if (args.value) {
+      encryptValue(args.secret, args.value);
+    }
+    Logger.success("✅ Ciphenv Completed Encryption");
+  } catch (error) {
+    Logger.error(error);
   }
-  if (args.value) {
-    encryptValue(args.secret, args.value);
-  }
-  Logger.success("✅ Ciphenv Completed Encryption");
 }
 
 const command: CommandModule<Arguments, Arguments> = {
