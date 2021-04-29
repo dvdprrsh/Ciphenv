@@ -50,7 +50,7 @@ DB_PASS="DEC:s1mpl32"
 Then, all that is needed is to run:
 
 ```shell
-$ npx ciphenv encrypt --secret superSecret
+$ npx ciphenv encrypt -F --secret superSecret
 
 # `.env.enc` file created
 ```
@@ -99,7 +99,7 @@ const config = getDecryptedValues(process.env.SECRET, dotenv.config({ path: `.en
 To decrypt the encrypted `.env` file from the CLI you can then just run:
 
 ```shell
-$ npx ciphenv decrypt --secret superSecret
+$ npx ciphenv decrypt -F --secret superSecret
 
 # `.env.dec` file created
 ```
@@ -123,11 +123,11 @@ Here are `.gitignore` entries which could be used to avoid committing the decryp
 
 ### CLI Options
 
-| Option, [alias] | Description                                            | Value Type            | Default    |
-| --------------- | ------------------------------------------------------ | --------------------- | ---------- |
-| `--version`     | Show version number                                    | `boolean`             |            |
-| `-R, --replace` | Overwrite the specified `.env*` file with new contents | `boolean`             | `false`    |
-| `-S, --secret`  | Secret to use for encryption                           | `string`\*            | (required) |
-| `-F, --file`    | Path to `.env*`                                        | `string` or `boolean` | `false`    |
-| `-V, --value`   | Value to be encrypted                                  | `string`              |            |
-| `-h, --help`    | Show help                                              | `boolean`             |            |
+| Option, [alias] | Description                                            | Value Type            | Default                              |
+| --------------- | ------------------------------------------------------ | --------------------- | ------------------------------------ |
+| `--version`     | Show version number                                    | `boolean`             |                                      |
+| `-R, --replace` | Overwrite the specified `.env*` file with new contents | `boolean`             | `false`                              |
+| `-S, --secret`  | Secret to use for encryption                           | `string`\*            | (required)                           |
+| `-F, --file`    | Path to `.env*`                                        | `string` or `boolean` | `false` or `.env` if value is `true` |
+| `-V, --value`   | Value to be encrypted                                  | `string`              |                                      |
+| `-h, --help`    | Show help                                              | `boolean`             |                                      |
