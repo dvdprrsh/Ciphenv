@@ -15,6 +15,8 @@
     "start": "nodemon --config nodemon.json --exec \"npm run dev\"",
     "dev": "rimraf lib tests/.env.* && tsc && npm link && npm test",
     "test": "mocha ./tests/*.test.ts",
+    "devbuild": "npm run build && npm link",
+    "prebuild": "rimraf lib",
     "build": "tsc"
   },
   "repository": {

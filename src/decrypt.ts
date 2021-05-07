@@ -78,6 +78,11 @@ function decryptFile(secret: string, file: string | true, replace: boolean) {
     if (encFileRes?.groups?.path) {
       const encFile = encFileRes.groups;
       const decFilePath = path.join(path.dirname(envPath), encFile.path);
+
+      if (!fs.existsSync(decFilePath)) {
+        fs.mkdirSync(path.dirname(decFilePath), { recursive: true });
+      }
+
       fs.writeFileSync(path.normalize(decFilePath), encFile.value);
       decrypted = `DEC_FILE_PATH:${encFile.path}`;
     } else {
