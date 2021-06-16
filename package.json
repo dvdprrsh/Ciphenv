@@ -44,7 +44,7 @@
   "homepage": "https://github.com/dvprrsh/Ciphenv#readme",
   "dependencies": {
     "constant-case": "^3.0.4",
-    "dotenv": "^8.2.0",
+    "dotenv": "^8.6.0",
     "yargs": "^16.2.0"
   },
   "devDependencies": {
