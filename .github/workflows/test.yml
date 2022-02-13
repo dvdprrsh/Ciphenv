@@ -20,6 +20,7 @@ jobs:
 
       - name: Build
         run: |
+          npm i -g npm@8
           npm ci
           npm run build
           npm link

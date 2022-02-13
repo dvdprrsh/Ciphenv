@@ -42,11 +42,9 @@
     "url": "https://github.com/dvprrsh/Ciphenv/issues"
   },
   "homepage": "https://github.com/dvprrsh/Ciphenv#readme",
-  "peerDependencies": {
-    "dotenv": ">=8"
-  },
   "dependencies": {
     "constant-case": "^3.0.4",
+    "dotenv": ">=8",
     "yargs": "^16.2.0"
   },
   "devDependencies": {
