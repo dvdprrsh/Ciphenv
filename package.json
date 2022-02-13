@@ -2,10 +2,10 @@
   "name": "ciphenv",
   "version": "2.1.2",
   "description": "Ciphenv (Ciphered Env) is a tool for encrypting and decrypting .env* files using prefixes to indicate values to encrypt.",
-  "main": "./lib/index.js",
-  "types": "./lib/*.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "bin": {
-    "ciphenv": "./lib/cli.js"
+    "ciphenv": "lib/cli.js"
   },
   "files": [
     "lib/*",
@@ -42,9 +42,11 @@
     "url": "https://github.com/dvprrsh/Ciphenv/issues"
   },
   "homepage": "https://github.com/dvprrsh/Ciphenv#readme",
+  "peerDependencies": {
+    "dotenv": ">=8"
+  },
   "dependencies": {
     "constant-case": "^3.0.4",
-    "dotenv": "^8.6.0",
     "yargs": "^16.2.0"
   },
   "devDependencies": {
