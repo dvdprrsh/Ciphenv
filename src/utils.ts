@@ -22,7 +22,7 @@ export class CiphenvError extends Error {
   }
 }
 
-export function createCiphenvError(options: { error: unknown; key?: string }) {
+export function createCiphenvError(options: { error: unknown; key?: string }): CiphenvError {
   return new CiphenvError(options);
 }
 
