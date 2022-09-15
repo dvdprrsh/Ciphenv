@@ -63,7 +63,7 @@ function encryptFile(secret: string, file: string | true, replace: boolean) {
   return filePath;
 }
 
-export function encryptValue(secret: string, value: string) {
+export function encryptValue(secret: string, value: string): string {
   return getEncryptedValue(secret, value);
 }
 

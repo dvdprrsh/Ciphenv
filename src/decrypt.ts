@@ -100,7 +100,7 @@ function decryptFile(secret: string, file: string | true, replace: boolean) {
   return filePath;
 }
 
-export function decryptValue(secret: string, value: string) {
+export function decryptValue(secret: string, value: string): string {
   return getDecryptedValue(secret, value);
 }
 
