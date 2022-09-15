@@ -6,6 +6,26 @@ export const DECRYPTED_REGEX = /^((?<isDecrypted>DEC):|(?<isDecryptedFile>DEC_FI
 export const ENCRYPTED_REGEX = /^(?<isEncrypted>ENC:)?(?<value>.+)/i;
 export const ENCRYPTED_FILE_REGEX = /^(?<path>.+)_PATH_END_(?<value>.+)/is;
 
+export class CiphenvError extends Error {
+  public key?: string;
+  constructor({ error, key }: { error: unknown; key?: string }) {
+    super();
+    this.key = key;
+    if (!(error instanceof Error)) {
+      this.message = String(error);
+      return this;
+    }
+    this.name = error.name;
+    this.message = error.message;
+    this.stack = error.stack;
+    return this;
+  }
+}
+
+export function createCiphenvError(options: { error: unknown; key?: string }): CiphenvError {
+  return new CiphenvError(options);
+}
+
 export function getBuilder(type: "encryption" | "decryption"): CommandModule<Arguments, Arguments>["builder"] {
   const isEncryption = type === "encryption";
   return {
@@ -44,7 +64,7 @@ export function getBuilder(type: "encryption" | "decryption"): CommandModule<Arg
   };
 }
 
-export const algorithm = "aes-256-gcm";
+export const algorithm: crypto.CipherGCMTypes = "aes-256-gcm";
 export const ivLength = 16;
 export const saltLength = 16;
 export const tagLength = 16;
@@ -77,9 +97,9 @@ export function getSalt(): Buffer {
 export function getKey(secret: crypto.BinaryLike, salt: crypto.BinaryLike): Buffer {
   return crypto.pbkdf2Sync(secret, salt, iterations, keyLen, digest);
 }
-export function getCipher(cipherKey: crypto.CipherKey, iv: crypto.BinaryLike | null): crypto.CipherGCM {
+export function getCipher(cipherKey: crypto.CipherKey, iv: crypto.BinaryLike): crypto.CipherGCM {
   return crypto.createCipheriv(algorithm, cipherKey, iv);
 }
-export function getDecipher(decipherKey: crypto.CipherKey, iv: crypto.BinaryLike | null): crypto.DecipherGCM {
+export function getDecipher(decipherKey: crypto.CipherKey, iv: crypto.BinaryLike): crypto.DecipherGCM {
   return crypto.createDecipheriv(algorithm, decipherKey, iv);
 }

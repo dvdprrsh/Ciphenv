@@ -6,16 +6,16 @@
     }
   },
   "compilerOptions": {
-    "target": "es5",
-    "baseUrl": "./",
-    "module": "CommonJS",
+    "target": "ES6",
+    "outDir": "lib",
     "declaration": true,
-    "outDir": "./lib",
     "strict": true,
     "noImplicitAny": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
   },
-  "exclude": ["tests/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["tests/**/*", "lib"]
 }

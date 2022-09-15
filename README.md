@@ -9,15 +9,18 @@
 
 Ciphenv (Ciphered Env) is a simple CLI tool to encrypt/cipher your `.env` files using prefixes to indicate whether you want the value to be encrypted using a given secret.
 
-- [Install](#install)
-- [Usage](#usage)
-  - [Encryption](#encryption)
-    - [Encrypting Entire Files](#encrypting-entire-files)
-  - [Decryption](#decryption)
-    - [At Runtime](#at-runtime)
-    - [Using the CLI](#using-the-cli)
-    - [Decrypting Entire Files](#decrypting-entire-files)
-  - [CLI Options](#cli-options)
+- [Ciphenv](#ciphenv)
+  - [Install](#install)
+  - [Usage](#usage)
+    - [Encryption](#encryption)
+      - [At Runtime](#at-runtime)
+      - [Using the CLI](#using-the-cli)
+      - [Encrypting Entire Files](#encrypting-entire-files)
+    - [Decryption](#decryption)
+      - [At Runtime](#at-runtime-1)
+      - [Using the CLI](#using-the-cli-1)
+      - [Decrypting Entire Files](#decrypting-entire-files)
+    - [CLI Options](#cli-options)
 
 ## Install
 
@@ -40,6 +43,32 @@ DB_PASS="s1mpl32"
 ```
 
 ### Encryption
+
+#### At Runtime
+
+To encrypt at runtime Ciphenv provides the `encryptValue` utility function.
+
+```ts
+/**
+ * @param secret the secret used to encrypt the values.
+ * @param value the value to encrypt
+ * @returns the encrypted value
+ */
+function encryptValue(secret: string, value: string): string;
+```
+
+Here is an example of this usage:
+
+```js
+import dotenv from "dotenv";
+import { encryptValue } from "ciphenv";
+
+function encrypt(someValue: string) {
+  return encryptValue(process.env.SECRET, someValue);
+}
+```
+
+#### Using the CLI
 
 For the values that you want to be encrypted add a prefix of `DEC:` (which indicates it is decrypted) to the value. For example, taking the previous example and assuming the `DB_PASS` would want to be encrypted:
 
@@ -91,7 +120,7 @@ PEM="ENC:********"
 
 #### At Runtime
 
-To decrypt at runtime Ciphenv provides two utility functions `getDecryptedValues` and `getDecryptedValue`.
+To decrypt at runtime Ciphenv provides two utility functions `decryptValues` and `decryptValue`.
 
 ```ts
 /**
@@ -99,23 +128,23 @@ To decrypt at runtime Ciphenv provides two utility functions `getDecryptedValues
  * @param env the parsed output from `dotenv` for the specified `.env*` file
  * @returns the unencrypted env object (without the `DEC:` prefix on the values)
  */
-function getDecryptedValues(secret: string, env: { [key: string]: any }): { [key: string]: any };
+function decryptValues(secret: string, env: { [key: string]: any }): { [key: string]: any };
 
 /**
  * @param secret the secret used to encrypt the values.
  * @param value the value to decrypt
  * @returns the decrypted value (without the `DEC:` prefix)
  */
-function getDecryptedValue(secret: string, value: string): string;
+function decryptValue(secret: string, value: string): string;
 ```
 
 Here is an example of this usage:
 
 ```js
 import dotenv from "dotenv";
-import { getDecryptedValues } from "ciphenv";
+import { decryptValues } from "ciphenv";
 
-const config = getDecryptedValues(process.env.SECRET, dotenv.config({ path: `.env.${NODE_ENV}.enc` }).parsed);
+const config = decryptValues(process.env.SECRET, dotenv.config({ path: `.env.${NODE_ENV}.enc` }).parsed);
 ```
 
 #### Using the CLI
