@@ -4,7 +4,11 @@ import fs from "fs";
 import path from "path";
 import { cwd } from "process";
 import { CommandModule } from "yargs";
+import Logger from "./logger";
+import { Arguments } from "./types";
 import {
+  CiphenvError,
+  createCiphenvError,
   encryptedValueSlice,
   ENCRYPTED_FILE_REGEX,
   ENCRYPTED_REGEX,
@@ -14,11 +18,9 @@ import {
   ivSlice,
   saltSlice,
   tagSlice,
-} from "./helpers";
-import Logger from "./logger";
-import { Arguments } from "./types";
+} from "./utils";
 
-export function getDecryptedValue(secret: string, value: string, key?: string): string {
+function getDecryptedValue(secret: string, value: string, key?: string): string {
   try {
     const buffer = Buffer.from(value, "base64");
     const salt = buffer.slice(saltSlice.start, saltSlice.end);
@@ -30,13 +32,11 @@ export function getDecryptedValue(secret: string, value: string, key?: string): 
     decipher.setAuthTag(tag);
     return [decipher.update(encryptedValue), decipher.final("utf8")].join("");
   } catch (error) {
-    Logger.error("Error during decryption!", ...(!key ? [] : ["Error key:", key]));
-    Logger.info("Did you use the correct secret to encrypt/decrypt the value?");
-    throw error;
+    throw createCiphenvError({ error, key });
   }
 }
 
-export function getDecryptedValues(secret: string, env: { [key: string]: any }): { [key: string]: any } {
+export function decryptValues(secret: string, env: { [key: string]: any }): { [key: string]: any } {
   return Object.entries(env).reduce((prev, [key, value]) => {
     const defaultReturn = { ...prev, [key]: value };
     if (typeof value !== "string") {
@@ -97,30 +97,37 @@ function decryptFile(secret: string, file: string | true, replace: boolean) {
     filePath = path.join(path.dirname(envPath), `${path.basename(envPath).replace(".enc", "")}.dec`);
   }
   fs.writeFileSync(filePath, encEnvString);
-  Logger.info(`.env file decrypted and saved to ${filePath}`);
+  return filePath;
 }
 
-function decryptValue(secret: string, value: string) {
-  const decrypted = getDecryptedValue(secret, value);
-  Logger.success("Decrypted value:", decrypted);
+export function decryptValue(secret: string, value: string) {
+  return getDecryptedValue(secret, value);
 }
 
 function decrypt(args: Arguments): void {
-  if (args.file) {
-    decryptFile(args.secret, args.file, args.replace);
+  try {
+    if (args.file) {
+      const path = decryptFile(args.secret, args.file, args.replace);
+      Logger.info(`.env file decrypted and saved to ${path}`);
+    }
+    if (args.value) {
+      const value = decryptValue(args.secret, args.value);
+      Logger.success("Decrypted value:", value);
+    }
+    Logger.success("✅ Ciphenv Completed Decryption");
+  } catch (error) {
+    Logger.error(error);
+    if (error instanceof CiphenvError) {
+      Logger.error("Error during decryption!", ...(!error.key ? [] : ["Error key:", error.key]));
+    }
+    Logger.info("Did you use the correct secret to encrypt/decrypt the value?");
   }
-  if (args.value) {
-    decryptValue(args.secret, args.value);
-  }
-  Logger.success("✅ Ciphenv Completed Decryption");
 }
 
 const command: CommandModule<Arguments, Arguments> = {
   command: "decrypt",
   describe: "Decrypt specified .env* file",
-  builder: {
-    ...getBuilder("decryption"),
-  },
+  builder: getBuilder("decryption"),
   handler: decrypt,
 };
 
