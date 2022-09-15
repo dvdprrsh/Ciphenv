@@ -6,7 +6,7 @@
   "main": "lib/index.cjs",
   "types": "lib/index.d.ts",
   "bin": {
-    "ciphenv": "lib/cli.js"
+    "ciphenv": "lib/cli.cjs"
   },
   "files": [
     "lib/*",
@@ -18,7 +18,7 @@
     "test": "mocha ./tests/*.test.ts",
     "devbuild": "npm run build && npm link",
     "prebuild": "rimraf lib",
-    "build": "rollup --config rollup.config.ts --configPlugin typescript"
+    "build": "rollup --config rollup.config.js"
   },
   "repository": {
     "type": "git",
