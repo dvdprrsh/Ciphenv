@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dvprrsh/Ciphenv.git"
+    "url": "git+https://github.com/dvdprrsh/Ciphenv.git"
   },
   "keywords": [
     ".env",
@@ -37,12 +37,12 @@
     "environment",
     "variables"
   ],
-  "author": "dvprrsh",
+  "author": "dvdprrsh",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dvprrsh/Ciphenv/issues"
+    "url": "https://github.com/dvdprrsh/Ciphenv/issues"
   },
-  "homepage": "https://github.com/dvprrsh/Ciphenv#readme",
+  "homepage": "https://github.com/dvdprrsh/Ciphenv#readme",
   "peerDependencies": {
     "dotenv": ">=8.0.0"
   },
