@@ -1,7 +1,7 @@
 # Ciphenv
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/dvprrsh/ciphenv/Build%20and%20Publish?logo=github&style=for-the-badge)](https://github.com/dvprrsh/Ciphenv/actions?query=workflow%3A%22Build+and+Publish%22)
-[![GitHub package.json version](https://img.shields.io/github/package-json/v/dvprrsh/Ciphenv?logo=github&style=for-the-badge)](https://github.com/dvprrsh/Ciphenv)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/dvdprrsh/ciphenv/Build%20and%20Publish?logo=github&style=for-the-badge)](https://github.com/dvdprrsh/Ciphenv/actions?query=workflow%3A%22Build+and+Publish%22)
+[![GitHub package.json version](https://img.shields.io/github/package-json/v/dvdprrsh/Ciphenv?logo=github&style=for-the-badge)](https://github.com/dvdprrsh/Ciphenv)
 ![Snyk Vulnerabilities for npm package](https://img.shields.io/snyk/vulnerabilities/npm/ciphenv?logo=snyk&style=for-the-badge)
 ![Codacy grade](https://img.shields.io/codacy/grade/6244e596f81b48a5ba34d5aa0a8c55ff?logo=codacy&style=for-the-badge)
 [![npm](https://img.shields.io/npm/dw/ciphenv?logo=npm&style=for-the-badge)](https://www.npmjs.com/package/ciphenv)
